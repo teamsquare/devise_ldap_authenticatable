@@ -100,7 +100,12 @@ module Devise
       end
 
       def change_password!
-        update_ldap(:userpassword => Net::LDAP::Password.generate(:sha, @new_password))
+        if false # extract to a config var?
+          update_ldap(:userpassword => Net::LDAP::Password.generate(:sha, @new_password))
+        else
+          unicode_password = "\"#{@new_password}\"".encode(Encoding::UTF_16LE).force_encoding(Encoding::ASCII_8BIT)
+          update_ldap(:unicodePwd => unicode_password)
+        end
       end
 
       def in_required_groups?
